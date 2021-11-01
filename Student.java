@@ -3,12 +3,26 @@ import java.util.Scanner;
 public class Student {
     Scanner input = new Scanner(System.in);
     String[] nameIndex = new String[100];
-    int[] assignmentsAssigned, attendanceAssigned = new int[100];
+    int[] assignmentsAssigned = new int[100];
+    int[] attendanceAssigned = new int[100];
     float[][] gradePercent = new float[100][100];
     String[][] assignmentName = new String[100][100];
     String[][] absenceData = new String[100][100];
-    boolean[] dataAdded = new boolean[100];
+    boolean[] assignmentAdded = new boolean[100];
+    boolean[] attendanceAdded = new boolean[100];
+
     int currentStudent = 0;
+    public Student(){
+        for(int count = 0; count < 100; count++){
+        assignmentsAssigned[count] = 0;
+        attendanceAssigned[count] = 0;
+        for(int count2 = 0; count2 < 100; count2++){
+            assignmentName[count][count2] = ("");
+            gradePercent[count][count2] = 0;
+            absenceData[count][count2] = ("");
+        }
+        }
+    }
     public void Menu(){
         boolean exit = false;
         int choice;
@@ -131,10 +145,12 @@ public class Student {
                         break;
                     }
                 }while(dayNoHitch == false);
-                System.out.print("Enter attendance status (one word, such as absent or present)");
-                status = input.nextLine();
+                System.out.println("Enter attendance status (one word, such as absent or present)");
+                status = input.next();
                 absenceData[student][attendanceAssigned[student]] = (month + "/" + day + "/" + year + ": " + status);
                 attendanceAssigned[student]++;
+                attendanceAdded[student] = true;
+                change = true;
             }
             else if(assignmentName[student][choice].length() > 0){
                 do{
@@ -160,7 +176,7 @@ public class Student {
                             case 8:
                             case 10:
                             case 12:
-                            if(day > 0 && day >= 31)
+                            if(day > 0 && day <= 31)
                             dayNoHitch = true;
                             else
                             System.out.println("That is not a valid day for this month. Please try again.");
@@ -169,7 +185,7 @@ public class Student {
                             case 6:
                             case 9:
                             case 11:
-                            if(day > 0 && day >= 30)
+                            if(day > 0 && day <= 30)
                             dayNoHitch = true;
                             else 
                             System.out.println("That is not a valid day for this month. Please try again.");
@@ -193,11 +209,12 @@ public class Student {
                     System.out.println("Enter attendance status:");
                     status = input.nextLine();
                     absenceData[student][choice] = (month + "/" + day + "/" + year + ": " + status);
+                    change = true;
             }
             else
             System.out.println("That is not a valid answer. Please try again.");
         }   
-        dataAdded[choice] = true;
+        attendanceAdded[student] = true;
 
     }
 
@@ -206,29 +223,34 @@ public class Student {
         int choice = 0;
         while(change == false){
             System.out.println("Choose an assignment to edit:");
-            for(int updateAssCount = 0; updateAssCount < 100; updateAssCount++){
-                if(assignmentName[student][updateAssCount].length() > 0)
-                System.out.println(updateAssCount + ") " + assignmentName[student][updateAssCount] + ": " + gradePercent[student][updateAssCount]);
+            if(assignmentAdded[student] == true){
+                for(int updateAssCount = 0; updateAssCount < 100; updateAssCount++){
+                    if(assignmentName[student][updateAssCount].length() > 0)
+                    System.out.println(updateAssCount + ") " + assignmentName[student][updateAssCount] + ": " + gradePercent[student][updateAssCount]);
+                }
             }
             System.out.println("101) NEW ENTRY");
             choice = input.nextInt();
             if(choice == 101){
-                System.out.println("Enter new assignment name:");
-                assignmentName[student][assignmentsAssigned[student]] = input.nextLine();
+                System.out.println("Enter new assignment name (use underscores for spaces):");
+                //assignmentName[student][assignmentsAssigned[student]] = " ";
+                assignmentName[student][assignmentsAssigned[student]] = input.next();
                 System.out.println("Enter assignment percent (enter from 0-100 (ex: 45.6 percent)");
                 gradePercent[student][assignmentsAssigned[student]] = input.nextFloat();
                 assignmentsAssigned[student]++;
+                change = true;
             }
             else if(assignmentName[student][choice].length() > 0){
                 System.out.println("Enter new assignment name:");
                 assignmentName[student][assignmentsAssigned[student]] = input.nextLine();
-                System.out.println("Enter assignment percent (enter from 0-100 (ex: 45.6 percent)");
+                System.out.println("Enter assignment percent (ex: 45.6 percent)");
                 gradePercent[student][assignmentsAssigned[student]] = input.nextFloat();
+                change = true;
             }
             else
             System.out.println("That is not a valid answer. Please try again.");
         }   
-        dataAdded[choice] = true;
+        assignmentAdded[student] = true;
     }
 
     public int StudentSelect(){
@@ -246,21 +268,23 @@ public class Student {
 
     public void List(){
         int listStudentSelect = StudentSelect();
-        if(dataAdded[listStudentSelect] == true){
+        if(assignmentAdded[listStudentSelect] == true){
             System.out.println("Info on " + nameIndex[listStudentSelect] + ": \nAssignments:");
             //lol
             for(int assCount = 0; assCount < 100; assCount++){
                 if(assignmentName[listStudentSelect][assCount].length() > 0)
                 System.out.println(assignmentName[listStudentSelect][assCount] + ": " + gradePercent[listStudentSelect][assCount]);
             }
-            System.out.print("Attendance (date format mm/dd/yyyy):");
+        }
+        if(attendanceAdded[listStudentSelect] == true){
+            System.out.println("Attendance (date format mm/dd/yyyy):");
             for(int absCount = 0; absCount < 100; absCount++){
                 if(absenceData[listStudentSelect][absCount].length() > 0)
                 System.out.println(absenceData[listStudentSelect][absCount]);
             }
         }
         else
-        System.out.println("No data available for " + nameIndex[listStudentSelect]);
+        System.out.println("Some data not available for " + nameIndex[listStudentSelect]);
     }
 
 }
