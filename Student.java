@@ -2,7 +2,7 @@
 - add a case for no students added and other methods being called
 - add a deletion functionality
 - add schedules
-- comment the attendance code
+- comment the attendance code - DONE!!!
 - take a break (joke!!!!!!!!!!!!!!!!!!!!!)
 */
 //import scanner
@@ -79,9 +79,15 @@ public class Student {
 
     //this method creates a new student.
     public void Create(){
-        System.out.println("Enter student name (NO SPACES, USE UNDERSCORES):");
+        String first = new String();
+        String last = new String();
+
+        System.out.println("Enter first name:");
         //take in the input from the user, and assign it to the next available location on the name array.
-        nameIndex[currentStudent] = input.next();
+        first = input.next();
+        System.out.println("Enter last name:");
+        last = input.next();
+        nameIndex[currentStudent] = (first + " " + last);
         System.out.println("Student " + nameIndex[currentStudent] + " added!");
         //adds 1 to the current student integer, which moves the next student input into the next available spot.
         currentStudent++;
@@ -114,36 +120,50 @@ public class Student {
 
     }
 
+    //this method updates a student's absences.
     public void UpdateAbsences(int student){
+        //initialize exit boolean
         boolean change = false;
+        //initialize day checker boolean
         boolean dayNoHitch = false;
+        //initialize various ints
         int month, day, year, choice = 0;
+        //string for listing the attendance status.
         String status;
+        //while loop to trap the user
         while(change == false){
+            //ask for input
             System.out.println("Choose an attendance entry to edit:");
+            //print out attendance records if they exist
             for(int updateAbsCount = 0; updateAbsCount < 100; updateAbsCount++){
                 if(absenceData[student][updateAbsCount].length() > 0)
                 System.out.println(updateAbsCount + ") " + absenceData[student][updateAbsCount]);
             }
             System.out.println("101) NEW ENTRY");
+            //take input
             choice = input.nextInt();
+            //if case for a new entry
             if(choice == 101){
                 do{
+                //enters in month, checks if it's in [1,12]. if not, it restarts the loop.
                 System.out.println("Enter month:");
                 month = input.nextInt();
                 if(month < 1 || month > 12)
                 System.out.println("That is not a valid month. Please try again.");
-                }while(month < 1 && month > 12);
+                }while(month < 1 || month > 12);
                 do{
+                    //enters in year, checks if it's > 0. if not, it restarts the loop.
                     System.out.println("Enter year:");
                     year = input.nextInt();
                     if(year < 0)
                     System.out.println("That is not a valid year. Please try again.");
                 }while(year < 0);
                 do{
+                    //loop that will check for the day entered. if it matches with the switch declarations, the exit boolean is true and the loop is cleared.
                     System.out.print("Enter day:");
                     day = input.nextInt();
                     switch(month){
+                        //these cases are for the 31 day months.
                         case 1:
                         case 3:
                         case 5:
@@ -151,21 +171,24 @@ public class Student {
                         case 8:
                         case 10:
                         case 12:
-                        if(day > 0 && day >= 31)
+                        if(day > 0 && day <= 31)
                         dayNoHitch = true;
                         else
                         System.out.println("That is not a valid day for this month. Please try again.");
                         break;
+                        //these cases are for the 30 day months.
                         case 4:
                         case 6:
                         case 9:
                         case 11:
-                        if(day > 0 && day >= 30)
+                        if(day > 0 && day <= 30)
                         dayNoHitch = true;
                         else 
                         System.out.println("That is not a valid day for this month. Please try again.");
                         break;
+                        //this case is for february. i hate february.
                         case 2:
+                        //checks for leap year. if yes, then 29 day range; if no, 28 day range.
                         if(year % 4 == 0){
                             if(day > 0 && day <= 29)
                             dayNoHitch = true;
@@ -181,13 +204,19 @@ public class Student {
                         break;
                     }
                 }while(dayNoHitch == false);
+                //once the date loop is cleared, the user enters in a string for the attendance record.
                 System.out.println("Enter attendance status (one word, such as absent or present)");
                 status = input.next();
+                //this is all assigned to a string in the attendance array.
                 absenceData[student][attendanceAssigned[student]] = (month + "/" + day + "/" + year + ": " + status);
+                //moves to the next available spot in the array
                 attendanceAssigned[student]++;
+                //indicates that there is attendance in for this student, which unlocks listing functionality for this student. NULL POINTERS!
                 attendanceAdded[student] = true;
+                //change exit boolean to true
                 change = true;
             }
+            //this entire block is for editing a preexisting attendance record. it is basically the same as the previous block. you can't make me comment the whole thing again.
             else if(assignmentName[student][choice].length() > 0){
                 do{
                     System.out.println("Enter month:");
@@ -245,6 +274,7 @@ public class Student {
                     System.out.println("Enter attendance status:");
                     status = input.nextLine();
                     absenceData[student][choice] = (month + "/" + day + "/" + year + ": " + status);
+                    //the only difference is that it does not move to a new spot on the array, as an existing set was edited. nothing was added, so there's no need to move to a new spot.
                     change = true;
             }
             else
@@ -276,7 +306,7 @@ public class Student {
             //if ther user wants to make a new entry, they are directed here
             if(choice == 101){
                 //take the assignment name in
-                System.out.println("Enter new assignment name (use underscores for spaces):");
+                System.out.println("Enter new assignment name:");
                 //the assignment here is decided by first getting the student for the row, then the current available array spot for that student, which is held in that assignmentsAssigned array.
                 assignmentName[student][assignmentsAssigned[student]] = input.next();
                 //take in a float for the percentage
@@ -291,8 +321,8 @@ public class Student {
             //this if condition ensures that there actually is something in the selected spot to be edited. note how all values in this array were assigned to "" earlier, which is a 0 length string. if something is in the spot, the length will be > 0, which means the statement is true.
             else if(assignmentName[student][choice].length() > 0){
                 //this section is essentially the exact same as the procedure for the new entry, so i won't comment all the lines here. the key difference is that there is no  assignmentsAssigned[student]++ line; we are editing a preexisting line so we don't need to move to an available spot. 
-                System.out.println("Enter new assignment name:");
-                assignmentName[student][assignmentsAssigned[student]] = input.nextLine();
+                System.out.println("Enter new assignment name (one word):");
+                assignmentName[student][assignmentsAssigned[student]] = input.next();
                 System.out.println("Enter assignment percent (ex: 45.6 percent)");
                 gradePercent[student][assignmentsAssigned[student]] = input.nextFloat();
                 change = true;
