@@ -322,9 +322,9 @@ public class Student {
             else if(assignmentName[student][choice].length() > 0){
                 //this section is essentially the exact same as the procedure for the new entry, so i won't comment all the lines here. the key difference is that there is no  assignmentsAssigned[student]++ line; we are editing a preexisting line so we don't need to move to an available spot. 
                 System.out.println("Enter new assignment name (one word):");
-                assignmentName[student][assignmentsAssigned[student]] = input.next();
+                assignmentName[student][choice] = input.next();
                 System.out.println("Enter assignment percent (ex: 45.6 percent)");
-                gradePercent[student][assignmentsAssigned[student]] = input.nextFloat();
+                gradePercent[student][choice] = input.nextFloat();
                 change = true;
             }
             else
