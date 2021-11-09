@@ -86,14 +86,6 @@ public class Student {
         System.out.println("Enter student name:");
         input.nextLine();
         nameIndex[currentStudent] = input.nextLine();
-        // String first = new String();
-        // String last = new String();
-        // System.out.println("Enter first name:");
-        // //take in the input from the user, and assign it to the next available location on the name array.
-        // first = input.next();
-        // System.out.println("Enter last name:");
-        // last = input.next();
-        // nameIndex[currentStudent] = (first + " " + last);
         System.out.println("Student " + nameIndex[currentStudent] + " added!");
         //adds 1 to the current student integer, which moves the next student input into the next available spot.
         currentStudent++;
@@ -131,7 +123,8 @@ public class Student {
 
     public void UpdateSchedule(int student){
         int choice = 0;
-        while(choice < 1 || choice > 4){
+        boolean exit = false;
+        while(exit == false){
             System.out.println("Choose a class to edit (select block #):");
             for(int schedC = 0; schedC < 4; schedC++){
                 if(schedule[student][schedC].length() < 1)
@@ -141,12 +134,13 @@ public class Student {
             }
             choice = input.nextInt();
             input.nextLine();
-            if(choice > 1 && choice < 5){
+            if(choice > 0 && choice < 5){
                 System.out.println("Enter new class name:");
-                input.nextLine();
                 schedule[student][choice - 1] = input.nextLine();
-                System.out.println("Class " + schedule[student][choice] + " added.");
+                System.out.println("Class " + schedule[student][choice - 1] + " added.");
+                exit = true;
             }
+            else
             System.out.println("That is not a valid selection. Please try again.");
         }
     }
@@ -191,7 +185,7 @@ public class Student {
                 }while(year < 0);
                 do{
                     //loop that will check for the day entered. if it matches with the switch declarations, the exit boolean is true and the loop is cleared.
-                    System.out.print("Enter day:");
+                    System.out.println("Enter day:");
                     day = input.nextInt();
                     switch(month){
                         //these cases are for the 31 day months.
@@ -236,11 +230,28 @@ public class Student {
                     }
                 }while(dayNoHitch == false);
                 //once the date loop is cleared, the user enters in a string for the attendance record.
-                System.out.println("Enter attendance status (one word, such as absent or present)");
+                System.out.println("Enter attendance status:");
                 input.nextLine();
                 status = input.nextLine();
+                int schedChoice = 0;
+                while(schedChoice < 1 || schedChoice > 5){
+                System.out.println("Enter relevant class: ");
+                for(int runningOut = 0; runningOut < 4; runningOut++){
+                    if(schedule[student][runningOut].length() < 1)
+                        System.out.println("Block " + (runningOut + 1) + ") EMPTY");
+                        else
+                        System.out.println("Block " + (runningOut + 1) + ") " + schedule[student][runningOut]);
+                }
+                System.out.println("5) All day");
+                schedChoice = input.nextInt();
+                if(schedChoice < 1 || schedChoice > 5)
+                System.out.println("That is not a valid selection. Please try again.");
+                }
                 //this is all assigned to a string in the attendance array.
+                if(schedChoice == 5)
                 absenceData[student][attendanceAssigned[student]] = (month + "/" + day + "/" + year + ": " + status);
+                else
+                absenceData[student][attendanceAssigned[student]] = (schedule[student][schedChoice - 1] + "- " +  month + "/" + day + "/" + year + ": " + status);
                 //moves to the next available spot in the array
                 attendanceAssigned[student]++;
                 //indicates that there is attendance in for this student, which unlocks listing functionality for this student. NULL POINTERS!
@@ -306,7 +317,25 @@ public class Student {
                     System.out.println("Enter attendance status:");
                     input.nextLine();
                     status = input.nextLine();
-                    absenceData[student][choice] = (month + "/" + day + "/" + year + ": " + status);
+                    int schedChoice2 = 0;
+                    while(schedChoice2 < 1 || schedChoice2 > 5){
+                    System.out.println("Enter relevant class: ");
+                    for(int runningOut = 0; runningOut < 4; runningOut++){
+                        if(schedule[student][runningOut].length() < 1)
+                            System.out.println("Block " + (runningOut + 1) + ") EMPTY");
+                            else
+                            System.out.println("Block " + (runningOut + 1) + ") " + schedule[student][runningOut]);
+                    }
+                    System.out.println("5) All day");
+                    schedChoice2 = input.nextInt();
+                    if(schedChoice2 < 1 || schedChoice2 > 5)
+                    System.out.println("That is not a valid selection. Please try again.");
+                    }
+                    //this is all assigned to a string in the attendance array.
+                    if(schedChoice2 == 5)
+                    absenceData[student][attendanceAssigned[student]] = (month + "/" + day + "/" + year + ": " + status);
+                    else
+                    absenceData[student][attendanceAssigned[student]] = (schedule[student][schedChoice2] + "- " +  month + "/" + day + "/" + year + ": " + status);
                     //the only difference is that it does not move to a new spot on the array, as an existing set was edited. nothing was added, so there's no need to move to a new spot.
                     change = true;
             }
