@@ -1,9 +1,10 @@
 /*TO DO:
 - add a case for no students added and other methods being called
-- add a deletion functionality
-- add schedules
+- add a deletion functionality - ehhh we'll see
+- add schedules - DONE!!!!!!!!
+- integrate schedules - DONE!!!!!!!!!!!
 - comment the attendance code - DONE!!!
-- take a break (joke!!!!!!!!!!!!!!!!!!!!!)
+- take a break (joke!!!!!!!!!!!!!!!!!!!!!) - not yet
 */
 //import scanner
 import java.util.Scanner;
@@ -19,9 +20,9 @@ public class Student {
     //this holds the number of attendance records assigned to every student. note that the way that these are implemented makes it so deleting isn't possible (unless we will it into existence later)
     int[] attendanceAssigned = new int[100];
     //this 2d array holds the grade percentages of every student. the 2d array logic is that each row is a student's data, and each column lines up with a specific assignment.
-    float[][] gradePercent = new float[100][100];
+    float[][][] gradePercent = new float[100][4][100];
     //this one follows the same logic, but holds the assignment names.
-    String[][] assignmentName = new String[100][100];
+    String[][][] assignmentName = new String[100][4][100];
     //again, same logic, holds all of the data on attendence/absences
     String[][] absenceData = new String[100][100];
     //these next two boolean arrays are to prevent errors later on in the code.
@@ -38,8 +39,10 @@ public class Student {
         assignmentsAssigned[count] = 0;
         attendanceAssigned[count] = 0;
         for(int count2 = 0; count2 < 100; count2++){
-            assignmentName[count][count2] = ("");
-            gradePercent[count][count2] = 0;
+            for(int count3 = 0; count3 < 4; count3++){
+            assignmentName[count][count3][count2] = ("");
+            gradePercent[count][count3][count2] = 0;
+            }
             absenceData[count][count2] = ("");
             if (count2 < 4){
             schedule[count][count2] = ("");
@@ -260,7 +263,7 @@ public class Student {
                 change = true;
             }
             //this entire block is for editing a preexisting attendance record. it is basically the same as the previous block. you can't make me comment the whole thing again.
-            else if(assignmentName[student][choice].length() > 0){
+            else if(absenceData[student][choice].length() > 0){
                 do{
                     System.out.println("Enter month:");
                     month = input.nextInt();
@@ -351,15 +354,28 @@ public class Student {
         boolean change = false;
         //initialize choice variable
         int choice = 0;
+        int classC = 0;
         //while loop to trap the user
         while(change == false){
+            while(classC < 1 || classC > 4){
+                System.out.println("Enter relevant class: ");
+                for(int runningOut = 0; runningOut < 4; runningOut++){
+                    if(schedule[student][runningOut].length() < 1)
+                        System.out.println("Block " + (runningOut + 1) + ") EMPTY");
+                        else
+                        System.out.println("Block " + (runningOut + 1) + ") " + schedule[student][runningOut]);
+                }
+                classC = input.nextInt();
+                if(classC < 1 || classC > 4)
+                System.out.println("That is not a valid selection. Please try again.");
+                }
             //outputs a list of all the possible items that can be edited
             System.out.println("Choose an assignment to edit:");
             //if an assignment has not been made yet, then this code section here (within this if) will not run. this is to prevent a null pointer error.
             if(assignmentAdded[student] == true){
                 for(int updateAssCount = 0; updateAssCount < 100; updateAssCount++){
-                    if(assignmentName[student][updateAssCount].length() > 0)
-                    System.out.println(updateAssCount + ") " + assignmentName[student][updateAssCount] + ": " + gradePercent[student][updateAssCount]);
+                    if(assignmentName[student][classC - 1][updateAssCount].length() > 0)
+                    System.out.println(updateAssCount + ") " + assignmentName[student][classC - 1][updateAssCount] + ": " + gradePercent[student][classC - 1][updateAssCount]);
                 }
             }
             //this will always print. it is for if the user wants to add a new entry.
@@ -371,24 +387,24 @@ public class Student {
                 System.out.println("Enter new assignment name:");
                 //the assignment here is decided by first getting the student for the row, then the current available array spot for that student, which is held in that assignmentsAssigned array.
                 input.nextLine();
-                assignmentName[student][assignmentsAssigned[student]] = input.nextLine();
+                assignmentName[student][classC - 1][assignmentsAssigned[student]] = input.nextLine();
                 //take in a float for the percentage
                 System.out.println("Enter assignment percent (enter from 0-100 (ex: 45.6 percent)");
                 //assignment here is the exact same as the previous one, except that it is simply different arrays.
-                gradePercent[student][assignmentsAssigned[student]] = input.nextFloat();
+                gradePercent[student][classC - 1][assignmentsAssigned[student]] = input.nextFloat();
                 //increases the number of the value in that array spot assigned to that student. it ensures that the next assignment will be in the next column over from the previous assignment.
                 assignmentsAssigned[student]++;
                 //exits the loop
                 change = true;
             }
             //this if condition ensures that there actually is something in the selected spot to be edited. note how all values in this array were assigned to "" earlier, which is a 0 length string. if something is in the spot, the length will be > 0, which means the statement is true.
-            else if(assignmentName[student][choice].length() > 0){
+            else if(assignmentName[student][classC - 1][choice].length() > 0){
                 //this section is essentially the exact same as the procedure for the new entry, so i won't comment all the lines here. the key difference is that there is no  assignmentsAssigned[student]++ line; we are editing a preexisting line so we don't need to move to an available spot. 
                 System.out.println("Enter new assignment name (one word):");
                 input.nextLine();
-                assignmentName[student][choice] = input.nextLine();
+                assignmentName[student][classC - 1][choice] = input.nextLine();
                 System.out.println("Enter assignment percent (ex: 45.6 percent)");
-                gradePercent[student][choice] = input.nextFloat();
+                gradePercent[student][classC - 1][choice] = input.nextFloat();
                 change = true;
             }
             else
@@ -425,21 +441,25 @@ public class Student {
             System.out.println("Info on " + nameIndex[listStudentSelect] + ": \nAssignments:");
             //prints out assignments if they exist (again using string length test)
             //ass lol
-            for(int assCount = 0; assCount < 100; assCount++){
-                if(assignmentName[listStudentSelect][assCount].length() > 0)
-                System.out.println(assignmentName[listStudentSelect][assCount] + ": " + gradePercent[listStudentSelect][assCount]);
+            for(int clAssCount = 0; clAssCount < 4; clAssCount++){
+                for(int assCount = 0; assCount < 100; assCount++){
+                    
+                    if(assignmentName[listStudentSelect][clAssCount][assCount].length() > 0)
+                    System.out.println(assignmentName[listStudentSelect][clAssCount][assCount] + ": " + gradePercent[listStudentSelect][clAssCount][assCount] + " (" + schedule[listStudentSelect][clAssCount] + ")");
+                }
             }
         }
+
         //this is the exact same thing as the assignments but for the student's attendence.
         if(attendanceAdded[listStudentSelect] == true){
-            System.out.println("Attendance (date format mm/dd/yyyy):");
+            System.out.println("\nAttendance data (date format mm/dd/yyyy):");
             //abs lol
             for(int absCount = 0; absCount < 100; absCount++){
                 if(absenceData[listStudentSelect][absCount].length() > 0)
                 System.out.println(absenceData[listStudentSelect][absCount]);
             }
         }
-
+        System.out.println("Attendance Data:");
         for(int runningOut = 0; runningOut < 4; runningOut++){
             if(schedule[listStudentSelect][runningOut].length() < 1)
                 System.out.println("Block " + (runningOut + 1) + ") EMPTY");
