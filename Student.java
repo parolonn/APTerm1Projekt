@@ -13,6 +13,7 @@ public class Student {
     //yeah, it's a lot of arrays, but i swear they all do something. they're all capable of holding 100 students, because for our purposes that's more than enough. this can be easily scaled, but there's no need to right now.
     //this one holds the names of every student.
     String[] nameIndex = new String[100];
+    String[][] schedule = new String[100][4];
     //this one holds the number of assignments assigned to every student (utilizing parallel array concepts. it's used a lot here)
     int[] assignmentsAssigned = new int[100];
     //this holds the number of attendance records assigned to every student. note that the way that these are implemented makes it so deleting isn't possible (unless we will it into existence later)
@@ -40,6 +41,9 @@ public class Student {
             assignmentName[count][count2] = ("");
             gradePercent[count][count2] = 0;
             absenceData[count][count2] = ("");
+            if (count2 < 4){
+            schedule[count][count2] = ("");
+            }
         }
         }
     }
@@ -79,15 +83,17 @@ public class Student {
 
     //this method creates a new student.
     public void Create(){
-        String first = new String();
-        String last = new String();
-
-        System.out.println("Enter first name:");
-        //take in the input from the user, and assign it to the next available location on the name array.
-        first = input.next();
-        System.out.println("Enter last name:");
-        last = input.next();
-        nameIndex[currentStudent] = (first + " " + last);
+        System.out.println("Enter student name:");
+        input.nextLine();
+        nameIndex[currentStudent] = input.nextLine();
+        // String first = new String();
+        // String last = new String();
+        // System.out.println("Enter first name:");
+        // //take in the input from the user, and assign it to the next available location on the name array.
+        // first = input.next();
+        // System.out.println("Enter last name:");
+        // last = input.next();
+        // nameIndex[currentStudent] = (first + " " + last);
         System.out.println("Student " + nameIndex[currentStudent] + " added!");
         //adds 1 to the current student integer, which moves the next student input into the next available spot.
         currentStudent++;
@@ -101,7 +107,7 @@ public class Student {
         //do loop to trap the user into picking one option.
         do{
             //take input
-            System.out.println("Choose data set to edit:\n1) Assignments / Grades\n2) Absences\n(NOTE: data sets can only be added to or edited. They CANNOT be deleted.)");
+            System.out.println("Choose data set to edit:\n1) Assignments / Grades\n2) Absences\n3) Schedule\n(NOTE: data sets can only be added to or edited. They CANNOT be deleted.)");
             choice = input.nextInt();
             //switch to divert the user into their desired edit. each method called pulls in the student number.
             switch(choice){
@@ -110,6 +116,9 @@ public class Student {
                 break;
                 case 2:
                 UpdateAbsences(student);
+                break;
+                case 3:
+                UpdateSchedule(student);
                 break;
                 default:
                 System.out.println("That is not a proper selection. Please try again.");
@@ -120,6 +129,28 @@ public class Student {
 
     }
 
+    public void UpdateSchedule(int student){
+        int choice = 0;
+        while(choice < 1 || choice > 4){
+            System.out.println("Choose a class to edit (select block #):");
+            for(int schedC = 0; schedC < 4; schedC++){
+                if(schedule[student][schedC].length() < 1)
+                System.out.println("Block " + (schedC + 1) + ") EMPTY");
+                else
+                System.out.println("Block " + (schedC + 1) + ") " + schedule[student][schedC]);
+            }
+            choice = input.nextInt();
+            input.nextLine();
+            if(choice > 1 && choice < 5){
+                System.out.println("Enter new class name:");
+                input.nextLine();
+                schedule[student][choice - 1] = input.nextLine();
+                System.out.println("Class " + schedule[student][choice] + " added.");
+            }
+            System.out.println("That is not a valid selection. Please try again.");
+        }
+    }
+    
     //this method updates a student's absences.
     public void UpdateAbsences(int student){
         //initialize exit boolean
@@ -206,7 +237,8 @@ public class Student {
                 }while(dayNoHitch == false);
                 //once the date loop is cleared, the user enters in a string for the attendance record.
                 System.out.println("Enter attendance status (one word, such as absent or present)");
-                status = input.next();
+                input.nextLine();
+                status = input.nextLine();
                 //this is all assigned to a string in the attendance array.
                 absenceData[student][attendanceAssigned[student]] = (month + "/" + day + "/" + year + ": " + status);
                 //moves to the next available spot in the array
@@ -272,6 +304,7 @@ public class Student {
                         }
                     }while(dayNoHitch == false);
                     System.out.println("Enter attendance status:");
+                    input.nextLine();
                     status = input.nextLine();
                     absenceData[student][choice] = (month + "/" + day + "/" + year + ": " + status);
                     //the only difference is that it does not move to a new spot on the array, as an existing set was edited. nothing was added, so there's no need to move to a new spot.
@@ -308,7 +341,8 @@ public class Student {
                 //take the assignment name in
                 System.out.println("Enter new assignment name:");
                 //the assignment here is decided by first getting the student for the row, then the current available array spot for that student, which is held in that assignmentsAssigned array.
-                assignmentName[student][assignmentsAssigned[student]] = input.next();
+                input.nextLine();
+                assignmentName[student][assignmentsAssigned[student]] = input.nextLine();
                 //take in a float for the percentage
                 System.out.println("Enter assignment percent (enter from 0-100 (ex: 45.6 percent)");
                 //assignment here is the exact same as the previous one, except that it is simply different arrays.
@@ -322,7 +356,8 @@ public class Student {
             else if(assignmentName[student][choice].length() > 0){
                 //this section is essentially the exact same as the procedure for the new entry, so i won't comment all the lines here. the key difference is that there is no  assignmentsAssigned[student]++ line; we are editing a preexisting line so we don't need to move to an available spot. 
                 System.out.println("Enter new assignment name (one word):");
-                assignmentName[student][choice] = input.next();
+                input.nextLine();
+                assignmentName[student][choice] = input.nextLine();
                 System.out.println("Enter assignment percent (ex: 45.6 percent)");
                 gradePercent[student][choice] = input.nextFloat();
                 change = true;
@@ -375,8 +410,13 @@ public class Student {
                 System.out.println(absenceData[listStudentSelect][absCount]);
             }
         }
-        else
-        System.out.println("Some data not available for " + nameIndex[listStudentSelect]);
+
+        for(int runningOut = 0; runningOut < 4; runningOut++){
+            if(schedule[listStudentSelect][runningOut].length() < 1)
+                System.out.println("Block " + (runningOut + 1) + ") EMPTY");
+                else
+                System.out.println("Block " + (runningOut + 1) + ") " + schedule[listStudentSelect][runningOut]);
+        }
     }
 
 }
