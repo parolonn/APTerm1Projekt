@@ -1,5 +1,5 @@
 /*TO DO:
-- add a case for no students added and other methods being called
+- add a case for no students added and other methods being called - probably not gonna happen
 - add a deletion functionality - ehhh we'll see
 - add schedules - DONE!!!!!!!!
 - integrate schedules - DONE!!!!!!!!!!!
@@ -438,7 +438,7 @@ public class Student {
         int listStudentSelect = StudentSelect();
         //checks if values have been added to assignments to prevent null pointer errors
         if(assignmentAdded[listStudentSelect] == true){
-            System.out.println("Info on " + nameIndex[listStudentSelect] + ": \nAssignments:");
+            System.out.println("Info on " + nameIndex[listStudentSelect] + ": \n\nAssignments:");
             //prints out assignments if they exist (again using string length test)
             //ass lol
             for(int clAssCount = 0; clAssCount < 4; clAssCount++){
@@ -452,14 +452,14 @@ public class Student {
 
         //this is the exact same thing as the assignments but for the student's attendence.
         if(attendanceAdded[listStudentSelect] == true){
-            System.out.println("\nAttendance data (date format mm/dd/yyyy):");
+            System.out.println("\n\nAttendance data (date format mm/dd/yyyy):");
             //abs lol
             for(int absCount = 0; absCount < 100; absCount++){
                 if(absenceData[listStudentSelect][absCount].length() > 0)
                 System.out.println(absenceData[listStudentSelect][absCount]);
             }
         }
-        System.out.println("Attendance Data:");
+        System.out.println("\nSchedule:");
         for(int runningOut = 0; runningOut < 4; runningOut++){
             if(schedule[listStudentSelect][runningOut].length() < 1)
                 System.out.println("Block " + (runningOut + 1) + ") EMPTY");
