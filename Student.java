@@ -51,50 +51,49 @@ public class Student {
         }
         }
     }
-
-    public void Menu(){
-        //initalize exit boolean
-        boolean exit = false;
-        //initialize selector variable
-        int choice;
-        //while loop to trap the user in the menu.
-        while(exit == false){
-            //print out options, take in input
-            System.out.println("Welcome to the Student Update System (SUS)!\nSelect Option:\n1) Create Student\n2) Update Student\n3) List Student Data\n4) Exit");
-            choice = input.nextInt();
-            //use a switch to divert the user to their desired method.
-            switch(choice){
-                case 1:
-                Create();
-                break;
-                case 2:
-                if(DoStudentsExist() == true)
-                UpdateMenu();
-                else
-                System.out.println("A student does not exist (yet). Please create one.");
-                break;
-                case 3:
-                if(DoStudentsExist() == true)
-                List();
-                else
-                System.out.println("A student does not exist (yet) Please create one.");
-                break;
-                case 4:
-                //this case gives a goodbye message and sets the exit boolean to true, then exits the loop.
-                System.out.println("Thank you for using SUS. Have a good day.");
-                exit = true;
-                break;
-                default:
-                System.out.println("That is not a valid choice. Please try again.");
-                break;
-            }
-        }
-    }
     
+    // public void Menu(){
+    //     //initalize exit boolean
+    //     boolean exit = false;
+    //     //initialize selector variable
+    //     int choice;
+    //     //while loop to trap the user in the menu.
+    //     while(exit == false){
+    //         //print out options, take in input
+    //         System.out.println("Welcome to the Student Update System (SUS)!\nSelect Option:\n1) Create Student\n2) Update Student\n3) List Student Data\n4) Exit");
+    //         choice = input.nextInt();
+    //         //use a switch to divert the user to their desired method.
+    //         switch(choice){
+    //             case 1:
+    //             Create();
+    //             break;
+    //             case 2:
+    //             if(DoStudentsExist() == true)
+    //             UpdateMenu();
+    //             else
+    //             System.out.println("A student does not exist (yet). Please create one.");
+    //             break;
+    //             case 3:
+    //             if(DoStudentsExist() == true)
+    //             List();
+    //             else
+    //             System.out.println("A student does not exist (yet) Please create one.");
+    //             break;
+    //             case 4:
+    //             //this case gives a goodbye message and sets the exit boolean to true, then exits the loop.
+    //             System.out.println("Thank you for using SUS. Have a good day.");
+    //             exit = true;
+    //             break;
+    //             default:
+    //             System.out.println("That is not a valid choice. Please try again.");
+    //             break;
+    //         }
+    //     }
+    // }
+
     //this method creates a new student.
     public void Create(){
         System.out.println("Enter student name:");
-        input.nextLine();
         nameIndex[currentStudent] = input.nextLine();
         System.out.println("Student " + nameIndex[currentStudent] + " added!");
         //adds 1 to the current student integer, which moves the next student input into the next available spot.
@@ -207,11 +206,12 @@ public class Student {
         int classC = 4;
         //while loop to trap the user
         while(change == false){
-            while(classC < 0 || classC > 3){
+            //note the .length() lines here. this is to ensure that an assignment is not assigned to an empty block. this check is NOT present for attendance, as a student could still be absent during an empty block.
+            while(classC < 0 || classC > 3 || schedule[student][classC].length() < 0){
                 System.out.println("Enter relevant class: ");
                 PrintSchedule(student);
                 classC = input.nextInt() - 1;
-                if(classC < 0 || classC > 3)
+                if(classC < 0 || classC > 3 || schedule[student][classC].length() < 0)
                 System.out.println("That is not a valid selection. Please try again.");
                 }
             //outputs a list of all the possible items that can be edited
@@ -417,6 +417,14 @@ public class Student {
             if(schedChoice == 5)
             return (month + "/" + day + "/" + year + ": " + status);
             else
-            return (schedule[student][schedChoice - 1] + "- " +  month + "/" + day + "/" + year + ": " + status);       
+            return ("Block " + schedChoice + " (" + SchedQC(student, schedChoice) + ") - " +  month + "/" + day + "/" + year + ": " + status);       
+    }
+
+    //this checks whether there is a block present, exclusively for the attendance maker.
+    public String SchedQC(int student, int schedChoice){
+        if(schedule[student][schedChoice - 1].length() > 0)
+        return schedule[student][schedChoice - 1];
+        else
+        return "EMPTY";
     }
 }
